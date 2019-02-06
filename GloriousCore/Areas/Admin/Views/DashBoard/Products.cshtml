@@ -1,0 +1,160 @@
+﻿@model PagedList.Core.IPagedList<GloriousCore.Models.ViewModels.ProductVM>
+
+@{
+    ViewData["Title"] = "Products";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<br /> <br />
+<h2>Продукты</h2>
+
+@if (TempData["SM"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SM"]
+    </div>
+}
+<select class="cat" id="SelectCat" name="SelectCate">
+    <option value="0" class="drop">Все</option>
+    @foreach (var item in ViewBag.Categories)
+    {
+        if (ViewBag.SelectedCat == item.Value)
+        {
+            <option selected value="@item.Value">@item.Text</option>
+        }
+        else
+        {
+            <option value="@item.Value">@item.Text</option>
+        }
+    }
+</select>
+
+<select class="mat" id="SelectMat" name="SelectMat">
+    <option value="0" class="drop">Все</option>
+    @foreach (var item in ViewBag.Materials)
+    {
+        if (ViewBag.SelectedMat == item.Value)
+        {
+            <option selected value="@item.Value">@item.Text</option>
+        }
+        else
+        {
+            <option value="@item.Value">@item.Text</option>
+        }
+    }
+</select>
+
+<br /><br />
+<a asp-action="AddProduct">Добавить продукт</a>
+<br /><br />
+<table class="table text-center">
+    <thead class="thead-dark">
+        <tr style="text-align:center;">
+            <th>
+                Имя
+            </th>
+            <th>
+                Описание
+            </th>
+            <th>
+                Цена
+            </th>
+            <th>
+                Скидка
+            </th>
+            <th>
+                Код
+            </th>
+            <th>
+                Раздел
+            </th>
+            <th>
+                Категория
+            </th>
+            <th>
+                Материал
+            </th>
+            <th>
+                Превью
+            </th>
+            <th style="width:150px"></th>
+        </tr>
+    </thead>
+
+    @foreach (var product in Model)
+    {
+        <tr>
+            <td>
+                @product.Name
+            </td>
+            <td>
+                @product.Description
+            </td>
+            <td>
+                ₴@product.Price
+            </td>
+            <td>
+                ₴@product.Discount
+            </td>
+            <td>
+                @product.ProductCode
+            </td>
+            <td>
+                @product.SectionName
+            </td>
+            <td>
+                @product.CategoryName
+            </td>
+            <td>
+                @product.MaterialName
+            </td>
+
+            <td>
+                <a href="/dashboard/shop/EditProduct/@product.Id">
+                    <img width="100" class="rounded mx-auto d-block"
+                         src="@Url.Action("GetPreview", "Shop",
+                        new { product.Id })" enctype="multipart/form-data" />
+                </a>
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "EditProduct", new { id = product.Id, secId = product.SectionId }) |
+                @Html.ActionLink("Delete", "DeleteProduct", new { id = product.Id }, new { @class = "delete" })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<div class="d-flex justify-content-center">
+    <pager list="@Model" asp-controller="dashboard" asp-action="Products" />
+
+</div>
+@section Scripts{
+
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            $("select").on("change", function () {
+                var cat = $("select.cat").val();
+                var mat = $("select.mat").val();
+                if (cat != 0 && ((mat == 0) || (mat == null))) {
+                    window.location = "/admin/dashboard/Products?catId=" + cat;
+                }
+                if (((cat == 0) || (cat == null)) && mat != 0) {
+                    window.location = "/admin/dashboard/Products?matId=" + mat;
+                }
+                if (cat == 0 && mat == 0) {
+                    window.location = "/admin/dashboard/Products";
+                }
+                if (cat != 0 && mat != 0) {
+                    window.location = "/admin/dashboard/Products?catId=" + cat + "&matId=" + mat;
+                }
+            });
+
+            //del
+            $("a.delete").click(function () {
+                if (!confirm("Удалить?")) return false;
+            });
+        });
+    </script>
+}

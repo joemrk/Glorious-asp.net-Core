@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+          integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU"
+          crossorigin="anonymous">
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/mdb.css" rel="stylesheet" />
+    <link href="~/css/PagedList.css" rel="stylesheet" />
+    <link href="~/css/swiper.min.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg scrolling-navbar">
+            <div class="container">
+                <a href="/" class="navbar-brand">
+                    <img width="100" src="~/images/title_white.png" />
+                </a>
+                <div class="cart-ico">
+                    <div class="long"><span class="cart_long cart_long-min">@ViewBag.CartLong</span></div>
+                    <a href="/cart">
+                        <i style="font-size: 25px" class="fas fa-shopping-cart"></i>
+                    </a>
+                </div>
+                <span class="verticl-line nav-link"><span></span></span>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle Navigation">
+                    <span class="nav-burger"><span></span></span>
+                </button>
+                <div class="collapse navbar-collapse" id="basicExampleNav">
+                    <ul class="navbar-nav mr-auto smooth-scroll">
+                        <li class="nav-item">
+                            @Html.ActionLink("Товары", "Products", "Home")
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Заказать эскиз", "Sketch", "Home")
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Контакты", "Contacts", "Home")
+                        </li>
+                        <li class="nav-item">
+                            @Html.ActionLink("Оплата и доставка", "payments", "Home")
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav nav-flex-icons">
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://vk.com/night_light_sell"><i class="fab fa-vk"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://www.facebook.com/glorious.woodwork"><i class="fab fa-facebook"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://www.instagram.com/glorious.woodwork/"><i class="fab fa-instagram"></i></a>
+                        </li>
+                        <span class="verticl-line nav-link"><span></span></span>
+                        <li class="nav-item">
+                            <div class="long"><span class="cart_long">@ViewBag.CartLong</span></div>
+                            <a class="nav-link" href="/cart">
+                                <i style="font-size: 25px" class="fas fa-shopping-cart"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <partial name="_CookieConsentPartial" />
+    </header>
+
+    @RenderBody()
+    <footer>
+        <div class="ftr">
+            <div class="container">
+                <div class="ftr-items row">
+                    <ul class="col-lg-4 col-md-12">
+                        <li>@Html.ActionLink("О нас", "About", "Home")</li>
+                        <li>@Html.ActionLink("Гарантии", "Warranty", "Home")</li>
+                        <li>@Html.ActionLink("Пользовательское соглашение", "Terms", "Home")</li>
+                    </ul>
+                    <ul class="col-lg-4 col-md-12">
+                        <li>@Html.ActionLink("Контакты", "Contacts", "Home")</li>
+                        <li>@Html.ActionLink("Оплата и доставка", "payments", "Home")</li>
+                        <li>@Html.ActionLink("Заказать эскиз", "Sketch", "Home")</li>
+                    </ul>
+                    <ul class="col-lg-4 col-md-12">
+                        <li>тел. 096 662 66 74</li>
+                        <li>тел. 073 340 74 03</li>
+                        <li class="ftr-platforms">
+                            <a href="https://vk.com/night_light_sell"><i class="fab fa-vk"></i></a>
+                            <a href="https://www.facebook.com/glorious.woodwork"><i class="fab fa-facebook"></i></a>
+                            <a href="https://www.instagram.com/glorious.woodwork/"><i class="fab fa-instagram"></i></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="copy text-center">&copy; Glorius 2019</div>
+            </div>
+        </div>
+    </footer>
+    <script src="~/js/jquery-3.3.1.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/swiper.min.js"></script>
+    <script src="~/js/site.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

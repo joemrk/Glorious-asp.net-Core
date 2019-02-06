@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Area</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/PagedList.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container admLink">
+            <div class="navbar-header">
+                @Html.ActionLink("Сайт", "Products", "Shop", new { area = "" }, new { @class = "navbar-brand" })
+                <ul class="admLink d-flex">
+                    <li>@Html.ActionLink("Продукты", "Products", "DashBoard")</li>
+                    <li>@Html.ActionLink("Материалы", "Materials", "DashBoard")</li>
+                    <li>@Html.ActionLink("Категории", "Categories", "DashBoard")</li>
+                    <li style="color: #fff;">Заказы(в разработке)</li>
+
+                </ul>
+            </div>
+            <div>
+                <ul class="nav d-flex admLink">
+                    <li><a href="/Account/Exit">Выход</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+
+    </div>
+    <script src="~/js/jquery-3.3.1.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/swiper.min.js"></script>
+    <script src="~/js/site.js"></script>
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

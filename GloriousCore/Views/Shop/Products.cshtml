@@ -1,0 +1,128 @@
+﻿@*@model IEnumerable<Glorius.Models.ViewModels.Shop.ProductVM>*@
+@model PagedList.Core.IPagedList<GloriousCore.Models.ViewModels.ProductVM>
+
+@{
+    ViewBag.Title = "Glorious";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="mt-2 min-h">
+    <div class="container">
+        <section class="filter mb-4">
+            <div class="row">
+                <div class="col-lg-4 col-sm-12 filter-item d-flex justify-content-center align-items-center">
+                    <label>Категория: </label>
+                    <select class="cat" id="inputGroupSelect01" name="SelectCate">
+                        <option value="0">Все</option>
+                        @foreach (var item in ViewBag.Categories)
+                        {
+                            if (ViewBag.SelectedCat == item.Value)
+                            {
+                                <option selected value="@item.Value">@item.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-lg-4 col-sm-12 filter-item d-flex justify-content-center align-items-center">
+                    <label>Материалы: </label>
+                    <select class="mat" id="SelectMat" name="SelectMat">
+                        <option value="0">Все</option>
+                        @foreach (var item in ViewBag.Materials)
+                        {
+                            if (ViewBag.SelectedMat == item.Value)
+                            {
+                                <option selected value="@item.Value">@item.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-lg-4 col-sm-12 filter-item ">
+                    @*@using (Ajax.BeginForm("Search", "Shop", new AjaxOptions { UpdateTargetId = "results" }))
+                        {
+                            <div class="finder">
+                                <input type="text" name="str">
+                                <input type="submit" value="Поиск">
+                            </div>
+                        }*@
+
+                </div>
+            </div>
+
+        </section>
+
+        <section class="products min-h">
+            <div class="row product-card d-flex justify-content-center align-items-center" id="results">
+                @foreach (var product in Model)
+                {
+                    <div class="product-item text-center">
+                        @if (product.Discount != 0)
+                        {
+                            <div class="hidden">
+                                <span class="discoun">скидка</span>
+                            </div>
+                        }
+                        <span class="back">
+                            <ul class="butn text-center">
+                                <li>
+                                    <form action="/Add" method="post">
+                                        <input data-val="true" id="id" name="id" type="hidden" value="@product.Id">
+                                        <input id="a" name="a" type="hidden" value="2">
+                                        <input id="amount" name="amount" type="hidden" value="1">
+                                        <input type="submit" value="Добавить в корзину">
+                                    </form>
+                                </li>
+                                <li>
+                                    <form action="/Add" method="post">
+                                        <input data-val="true" id="id" name="id" type="hidden" value="@product.Id">
+                                        <input id="a" name="a" type="hidden" value="1">
+                                        <input id="amount" name="amount" type="hidden" value="1">
+                                        <input type="submit" value="Купить">
+                                    </form>
+                                </li>
+                                <li>@Html.ActionLink("Детали", "GetProduct", "Shop", new { id = product.Id }, null)</li>
+                            </ul>
+                        </span>
+                        <img width="200" height="200" style="object-fit: cover" src="@Url.Action("GetPreview", "Shop",
+                        new { product.Id })" alt="">
+                    </div>
+                }
+            </div>
+        </section>
+        <div class="d-flex justify-content-center">
+            <pager list="@Model" asp-controller="Shop" asp-action="Products" />
+
+            @*@Html.PagedListPager((IPagedList)ViewBag.OnePageOfProducts, page => Url.Action("Products", new { page, catId = ViewBag.SelectedCat, matId = ViewBag.Materials }))*@
+        </div>
+    </div>
+</main>
+
+@section scripts{
+    <script>
+        $(function () {
+            $("select").on("change", function () {
+                var cat = $("select.cat").val();
+                var mat = $("select.mat").val();
+                if (cat != 0 && ((mat == 0) || (mat == null))) {
+                    window.location = "/products?catId=" + cat;
+                }
+                if (((cat == 0) || (cat == null)) && mat != 0) {
+                    window.location = "/products?matId=" + mat;
+                }
+                if (cat == 0 && mat == 0) {
+                    window.location = "/products";
+                }
+                if (cat != 0 && mat != 0) {
+                    window.location = "/products?catId=" + cat + "&matId=" + mat;
+                }
+            });
+        });
+    </script>
+}
