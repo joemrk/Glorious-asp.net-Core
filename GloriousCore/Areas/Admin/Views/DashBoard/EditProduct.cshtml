@@ -1,27 +1,28 @@
 ﻿@model GloriousCore.Models.ViewModels.ProductVM
 
 @{
-    ViewData["Title"] = "AddProduct";
+    ViewData["Title"] = "EditProduct";
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-<br /><br />
-<h2>Новый продукт</h2>
 
-<div>
-    <a asp-action="Products">К списку продуктов</a>
-</div>
+<br /><br />
+<h2>Редактор продукта</h2>
+
 @if (TempData["SM"] != null)
 {
     <div class="alert alert-success">
         @TempData["SM"]
     </div>
 }
-<br />
+<div>
+    @Html.ActionLink("К списку продуктов", "Products")
+</div>
 <hr />
 <div class="row">
-    <div class="col drop">
-        <form asp-action="AddProduct" enctype="multipart/form-data">
+    <div class="col-md-4">
+        <form asp-action="EditProduct" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="d-flex justify-content-between" style="padding: 10px 20px;">
                 <div class="d-flex">
                     <p>Раздел: </p>
@@ -44,7 +45,14 @@
                     <select class="cat form-control" id="CategoryId" name="CategoryId">
                         @foreach (var item in Model.Categories)
                         {
-                            <option value="@item.Value">@item.Text</option>
+                            if (Model.CategoryId.ToString() == item.Value)
+                            {
+                                <option selected value="@item.Value">@item.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
                         }
                     </select>
                 </div>
@@ -53,20 +61,30 @@
                     <select class="mat form-control" id="MaterialId" name="MaterialId">
                         @foreach (var item in Model.Materials)
                         {
-                            <option value="@item.Value">@item.Text</option>
+                            if (Model.MaterialId.ToString() == item.Value)
+                            {
+                                <option selected value="@item.Value">@item.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
                         }
                     </select>
                 </div>
+
             </div>
             <hr />
+            @Html.HiddenFor(model => model.Id)
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control"></textarea>
+                <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -77,26 +95,58 @@
             <div class="form-group">
                 <label asp-for="Discount" class="control-label"></label>
                 <input asp-for="Discount" class="form-control" />
+                <span asp-validation-for="Discount" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="file" name="file" id="ImageUpload"/>
-                <img src="#" alt="Preview" id="imgpreview" />
+                <label class="control-label col-md-2" for="HasSidebar">Image</label>
+                <div class="col-md-10">
+                    <img width="200" class="rounded mx-auto d-block"
+                         src="/admin/dashboard/GetPreview?id=@Model.Id" enctype="multipart/form-data" />
+                    @*<img width="200" class="rounded mx-auto d-block"
+                         src="@Url.Action("GetPreview", "Shop",
+                        new { Model.Id })" enctype="multipart/form-data" />*@
+                    <br /><br />
+                    <img src="#" id="imgpreview" />
+                    <br /><br />
+                    <div class="col-md-10">
+                        <input type="file" name="file" id="ImageUpload" />
+                    </div>
+                </div>
             </div>
+
             <div class="form-group">
-                <input type="submit" value="Добавить" class="butt" />
+                <div class="col-md-offset-2 col-md-10 admSub">
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </div>
+            </div>
+        </form>
+        <hr />
+        @foreach (var item in ViewBag.Ids)
+        {
+            <div style="display: inline-block;margin-right: 15px;">
+                <img src="/admin/dashboard/GetGallery?id=@item" width="200" class="rounded mx-auto d-block" enctype="multipart/form-data" />
+                <br />
+                @Html.ActionLink("Удаить", "DeleteImg", "Shop", new { @class = "deleteimage", data_name = item })
+            </div>
+        }
+        <form action="/admin/dashboard/SaveGallaryImages?id=@Model.Id" method="post" enctype="multipart/form-data" class="dropzone" id="dropzoneForm">
+            <div class="fallback">
+                <input type="file" name="file" multiple />
+                <input type="submit" value="Upload" />
             </div>
         </form>
     </div>
 </div>
 <link href="~/js/dropzone/basic.css" rel="stylesheet" />
 <link href="~/js/dropzone/dropzone.css" rel="stylesheet" />
+
 @section scripts{
-    <script src="~/js/dropzone/dropzone.js"></script>
+<script src="~/js/dropzone/dropzone.js"></script>
     <script>
 
         $(function () {
 
-          //preview select img
+            //preview select img
 
             function readURL(input) {
                 if (input.files && input.files[0]) {
@@ -143,13 +193,12 @@
                 });
 
             });
-
             $("select.sec").on("change", function () {
                 var sec = $("select.sec").val();
-                window.location = "/admin/dashboard/AddProduct?secId=" + sec;
+                var id = @Model.Id;
+                window.location = "/admin/dashboard/EditProduct?secId=" + sec + "&id=" + id;
             });
         });
 
     </script>
 }
-

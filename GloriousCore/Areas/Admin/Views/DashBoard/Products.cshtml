@@ -110,15 +110,17 @@
             </td>
 
             <td>
-                <a href="/dashboard/shop/EditProduct/@product.Id">
+                <a href="/admin/dashboard/EditProduct?id=@product.Id&secId=@product.SectionId">
                     <img width="100" class="rounded mx-auto d-block"
-                         src="@Url.Action("GetPreview", "Shop",
+                         src="@Url.Action("GetPreview", "Dashboard",
                         new { product.Id })" enctype="multipart/form-data" />
                 </a>
             </td>
             <td>
-                @Html.ActionLink("Edit", "EditProduct", new { id = product.Id, secId = product.SectionId }) |
-                @Html.ActionLink("Delete", "DeleteProduct", new { id = product.Id }, new { @class = "delete" })
+                <a asp-controller="Dashboard" asp-action="Edit" asp-route-id="@product.Id" asp-route-secId="@product.SectionId">Edit</a>
+                <a asp-controller="Dashboard" asp-action="Delete" asp-route-id="@product.Id" >Delete</a>
+                @*@Html.ActionLink("Edit", "EditProduct", new { id = product.Id, secId = product.SectionId }) |
+                @Html.ActionLink("Delete", "DeleteProduct", new { id = product.Id }, new { @class = "delete" })*@
             </td>
         </tr>
     }

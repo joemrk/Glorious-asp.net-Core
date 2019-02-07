@@ -27,8 +27,8 @@ namespace GloriousCore
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddDbContext<Db>(opt => opt.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;Initial Catalog=Db;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False",
-                    b => b.UseRowNumberForPaging()));
+            //services.AddDbContext<Db>(opt => opt.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;Initial Catalog=Db;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False",
+            //        b => b.UseRowNumberForPaging()));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
