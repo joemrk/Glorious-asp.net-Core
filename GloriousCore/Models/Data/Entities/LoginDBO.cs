@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GloriousCore.Models.Data.Entities
 {
-    [Table("tblUsers")]
+    [Table("tblUser")]
     public class LoginDBO
     {
         [Key]

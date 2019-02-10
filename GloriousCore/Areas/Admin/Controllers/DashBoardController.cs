@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GloriousCore.Models.Data;
 using GloriousCore.Models.Data.Entities;
 using GloriousCore.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,15 +15,9 @@ using PagedList.Core;
 namespace GloriousCore.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class DashBoardController : Controller
     {
-        //private readonly Db db;
-
-        //public DashBoardController(Db db)
-        //{
-        //    this.db = db;
-        //}
-
         /// <summary>
         /// PRODUCTS
         /// </summary>
@@ -193,7 +188,7 @@ namespace GloriousCore.Areas.Admin.Controllers
                 model.Materials = new SelectList(db.Materials.ToList(), "Id", "Name");
                 model.Sections = new SelectList(db.Sections.ToList(), "Id", "Name");
 
-                ViewBag.SelectedSec = dto.SectionId.ToString();
+                ViewBag.SelectedSec = secId.ToString();
 
                 //GALLRY///////////////////////////////////////
                 List<GalleryVM> gallery;
@@ -466,6 +461,7 @@ namespace GloriousCore.Areas.Admin.Controllers
 
             return View(MaterialVMList);
         }
+
         [HttpPost]
         public string AddNewMaterial(string matName)
         {
@@ -527,31 +523,31 @@ namespace GloriousCore.Areas.Admin.Controllers
         /// OTHER METHODS
         /// </summary>
         /// <param name="id"></param>
-
         [HttpPost]
-        public async void SaveGallaryImages(int id, IFormFile file) //не работает при создании товара т.к. у товора до создания нету ИД
+        public void SaveGallaryImages(int id, IFormFile file) //не работает при создании товара т.к. у товора до создания нету ИД
         {
             using (Db db = new Db())
             {
                 if (file != null && file.Length > 0)
                 {
                     GalleryDBO dto = new GalleryDBO();
+                    byte[] imageData = null;
 
-                    using (var stream = new MemoryStream())
+                    using (var br = new BinaryReader(file.OpenReadStream()))
                     {
-                        await file.CopyToAsync(stream);
-                        dto.ProductId = id;
-                        dto.Img = stream.ToArray();
-                        dto.ImgType = file.ContentType;
+                        imageData = br.ReadBytes((int)file.Length);
                     }
+
+                    dto.ProductId = id;
+                    dto.Img = imageData;
+                    dto.ImgType = file.ContentType;
 
                     db.ProductGallery.Add(dto);
                     db.SaveChanges();
-
                 }
             }
         }
-        //for preview image
+ 
         public FileContentResult GetPreview(int id)
         {
             using (Db db = new Db())
@@ -565,7 +561,6 @@ namespace GloriousCore.Areas.Admin.Controllers
             }
         }
 
-        //for gallery image
         public FileContentResult GetGallery(int id)
         {
             using (Db db = new Db())

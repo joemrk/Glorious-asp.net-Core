@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <UserSecretsId>f8f54ee2-7202-433f-ab92-2311f53c81c6</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,6 +11,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
     <PackageReference Include="PagedList.Core.Mvc" Version="1.2.0" />
+    <PackageReference Include="PaulMiami.AspNetCore.Mvc.Recaptcha" Version="1.2.1" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.0" />

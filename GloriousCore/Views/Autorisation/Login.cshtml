@@ -1,0 +1,53 @@
+﻿@model GloriousCore.Models.ViewModels.LoginVM
+@using GloriousCore.Validation;
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+
+    <form asp-controller="Autorisation" asp-action="Login" method="post">
+        <div class="content">
+            <div class="login">
+                <input type="text" name="Log" pattern="^[0-9A-z'.,-/]*$">
+                <input type="text" name="Pass" pattern="^[0-9A-z'.,-/]*$">
+                <br><br>
+                <div>
+                    @Html.GoogleInvisibleReCaptcha("Submit form", Configuration.GetValue<String>("GoogleReCaptcha:ClientKey"), "submitForm")
+                </div>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <ul>
+                        @foreach (var modelState in ViewData.ModelState.Values)
+                        {
+                            foreach (var error in modelState.Errors)
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        }
+                    </ul>
+                }
+                @if (TempData["SM"] != null)
+                {
+                    TempData["SM"].ToString();
+                }
+            </div>
+        </div>
+    </form>
+    <script type="text/javascript">
+        function submitForm() {
+            document.forms[0].submit();
+        }
+    </script>
+</body>
+</html>

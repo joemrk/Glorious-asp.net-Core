@@ -1,10 +1,11 @@
 ﻿using GloriousCore.Models.Data.Entities;
+using GloriousCore.Validation;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace GloriousCore.Models.ViewModels
 {
-    public class LoginVM
+    public class LoginVM : GoogleReCaptchaModelBase
     {
         public LoginVM()
         {
@@ -29,6 +30,7 @@ namespace GloriousCore.Models.ViewModels
         [StringLength(10, ErrorMessage = "Слишком много символов")]
         //[RegularExpression(@"^[0-9A-z]*$", ErrorMessage = "Недопустимые символы.")]
         [Remote("CheckString", "Home", ErrorMessage = "Недопустимые символы.")]
+        [DataType(DataType.Password)]
         public string Pass { get; set; }
     }
 }

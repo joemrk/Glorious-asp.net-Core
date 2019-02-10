@@ -711,6 +711,24 @@ select {
     }
 
 /*===========ADM===========*/
+.content {
+    margin: 0 auto;
+    width: 1000px;
+}
+
+.login {
+    background: #fff;
+    width: 300px;
+    height: 210px;
+    padding: 0;
+    padding: 30px;
+    margin: 0;
+    margin: 0 auto;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    box-shadow: 5px 5px 5px grey;
+    text-align: center;
+}
 .drop select {
     width: 200px;
     font-size: 18px;

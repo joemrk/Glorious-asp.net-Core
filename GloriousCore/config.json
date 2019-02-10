@@ -1,8 +1,0 @@
-{
-  //"ConnectionStrings": {
-  //  "Db": "Server=(localdb)\\MSSQLLocalDB;Database=Db;Trusted_Connection=True;MultipleActiveResultSets=true"
-  //},
-  "ConnectionStrings": {
-    "Db": "Data Source=(LocalDB)\\MSSQLLocalDB;DataBase = Db;Integrated Security=True;MultipleActiveResultSets=true"
-  }
-}

@@ -1,11 +1,12 @@
-﻿using GloriousCore.Models.Data;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PaulMiami.AspNetCore.Mvc.Recaptcha;
+using System.IO;
 
 namespace GloriousCore
 {
@@ -20,15 +21,28 @@ namespace GloriousCore
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            //services.AddDbContext<Db>(opt => opt.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;Initial Catalog=Db;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False",
-            //        b => b.UseRowNumberForPaging()));
+            services.AddSingleton<IConfiguration>(new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile($"appsettings.json")
+                .Build());
+
+            services.AddRecaptcha(new RecaptchaOptions  // залупа йобана!
+            {
+                SiteKey = configuration["561"],
+                SecretKey = configuration["561"]
+            });
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new PathString("/Autorisation/Login");
+                });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -46,11 +60,10 @@ namespace GloriousCore
 
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

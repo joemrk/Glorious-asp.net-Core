@@ -117,10 +117,8 @@
                 </a>
             </td>
             <td>
-                <a asp-controller="Dashboard" asp-action="Edit" asp-route-id="@product.Id" asp-route-secId="@product.SectionId">Edit</a>
-                <a asp-controller="Dashboard" asp-action="Delete" asp-route-id="@product.Id" >Delete</a>
-                @*@Html.ActionLink("Edit", "EditProduct", new { id = product.Id, secId = product.SectionId }) |
-                @Html.ActionLink("Delete", "DeleteProduct", new { id = product.Id }, new { @class = "delete" })*@
+                <a asp-controller="Dashboard" asp-action="EditProduct" asp-route-id="@product.Id" asp-route-secId="@product.SectionId">Edit</a> | 
+                <a asp-controller="Dashboard" asp-action="DeleteProduct" asp-route-id="@product.Id" >Delete</a>
             </td>
         </tr>
     }

@@ -4,8 +4,6 @@ using GloriousCore.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using PagedList.Core;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace GloriousCore.Controllers
