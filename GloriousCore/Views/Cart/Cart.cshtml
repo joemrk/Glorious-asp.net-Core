@@ -1,0 +1,201 @@
+﻿
+@{
+    ViewData["Title"] = "Корзина";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container min-h">
+    <br />
+
+    <h3>Корзина</h3>
+    @if (TempData["SM"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SM"]
+        </div>
+    }
+    <div class=" cart d-flex align-items-center row justify-content-center">
+        <table class="cart-tbl row " align="center">
+            @try
+            {
+                @foreach (var item in ViewBag.Cart)
+                {
+                    <tr>
+                        <td>
+                            <div class="tbl-item">
+                                <a asp-action="del" asp-controller="cart" asp-route-id="@item.Product.Id">X</a>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="tbl-item tbl-item-img">
+                                <img src="/getpreview/?id=@item.Product.Id" enctype="multipart/form-data" />
+                            </div>
+                        </td>
+                        <td>
+                            <div class="tbl-item">
+                                <a href="/product/@item.Product.ProductCode">@item.Product.Name</a>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="tbl-item">
+                                <p>@item.Product.Price</p>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="tbl-item">
+                                <input id="productId" type="hidden" value="@item.Product.Id" />
+                                <input min="1" id="amount" type="number" value="@item.Quantity">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="tbl-item">
+                                @if (item.Product.Discount == 0)
+                                {
+                                    <p>@((item.Quantity * item.Product.Price).ToString("0.00 ₴"))</p>
+                                }
+                                else
+                                {
+                                    <p>@((item.Quantity * item.Product.Discount).ToString("0.00 ₴")) </p>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            catch
+            {
+                <tr>
+                    <td style="border: none;">
+                        <div class="tbl-total">
+                            <p>Корзина пуста.</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+
+
+            <tr>
+                <td colspan="5" style="border: none;">
+                    <div class="tbl-total">
+                        <p>Итог: </p>
+                    </div>
+                </td>
+                <td style="border: none;">
+                    <div class="tbl-total">
+                        <p>@ViewBag.Total.ToString("0.00 ₴")</p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <form asp-action="Buy" asp-controller="cart" method="post">
+            <div class="row d-flex justify-content-center align-items-center box-shadow">
+                <div class="form-item col-md-12 col-lg-6 ">
+                    <label>ФИО:<span>*</span> </label><br>
+                    <input id="name" required type="text" name="name" pattern="^[A-zА-яёЁЇїІіЄєҐґ '.-]*$">
+                </div>
+
+                <div class="form-item col-md-12 col-lg-6">
+                    <label>Телефон:<span>*</span> </label><br>
+                    <div class="num">
+                        <p class="num-itm">+380</p>
+                        <input id="num" name="num" required type="text" pattern="[0-9-()+]{3,20}">
+                    </div>
+                </div>
+
+                <div class="form-item col-md-12 col-lg-6">
+                    <label>Email:<span>*</span> </label><br>
+                    <input id="mail" required type="text" name="email" pattern="^([a-z0-9_-]+\.)*[a-z0-9_-]+@("@")[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$">
+                </div>
+                <div class="form-item col-md-12 col-lg-6">
+                    <label>Город:<span>*</span> </label><br>
+                    <input id="city" required type="text" name="city" pattern="^[0-9A-zА-яёЁЇїІіЄєҐґ '.,-/]*$">
+                </div>
+
+                <div class="form-item col-md-12 col-lg-6">
+                    <label>Служба доставки:<span>*</span> </label><br>
+                    <select name="post" id="post">
+                        <option>Новая почта</option>
+                        <option>Ин Тайм</option>
+                        <option>Украпочта</option>
+                        <option>Самовывоз</option>
+                    </select>
+                </div>
+
+                <div class="form-item col-md-12 col-lg-6">
+                    <label>Адрес/отделение/почтовый индекс:<span>*</span> </label><br>
+                    <input id="address" required type="text" name="adres" value="" pattern="^[0-9A-zА-яёЁЇїІіЄєҐґ '.,-/]*$">
+                </div>
+
+                <div class="form-item col-md-12 col-lg-6">
+                    <label>Дополнительна информация (по-желанию): </label><br>
+                    <textarea id="note" name="note"></textarea>
+                </div>
+            </div>
+            <div class="submin row">
+                <div class="col-md-12">
+                    <input required type="checkbox">
+                    <label class="col-md-11">
+                        @*@Html.ActionLink("правила и условия", "Terms", "Home")*@
+                        Я прочитал(а) и соглашаюсь с правилами сайта <a asp-action="Terms" asp-controller="Shop">правила и условия</a> <span>*</span>
+                    </label>
+                </div>
+
+                <div class="col-md-12">
+                    <input id="sub" type="submit" value="Оформить заказ">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="~/js/jquery-3.3.1.min.js"></script>
+<script>
+
+    $('textarea').on('input', (function () {
+        var pattern = "^[0-9A-zА-яЁё '.,-/*/!/?/(/)/]*$";
+        if ($(this).val().match(pattern)) {
+            this.classList.remove('nono');
+            $('#sub').removeAttr('disabled');
+        } else {
+            this.classList.add('nono');
+            $('#sub').attr('disabled', 'disabled');
+        }
+    }));
+
+    $('input[type=text]').on('input', (function () {
+        this.addEventListener('input', function () {
+            if (this.validity.valid) {
+                this.classList.remove('nono');
+                $('#sub').removeAttr('disabled');
+            }
+            else {
+                this.classList.add('nono');
+                $('#sub').attr('disabled', 'disabled');
+            }
+        });
+    }));
+
+    $(function () {
+        $("select").on("change", function () {
+            var option = $("#post").val();
+            if (option == "Самовывоз") {
+                $('#address').css('background-color', '#c3c3c3');
+                $('#address').val('Самовывоз');
+                $('#address').attr('readonly', 'readonly');
+            } else {
+                $('#address').removeAttr('readonly');
+                $('#address').css('background-color', '#fff');
+                $('#address').val('');
+            }
+        });
+
+        $("[id=amount]").on('change', function () {
+            var amount = $(this).val();
+            var id = $(this).parent('div').find('#productId').val();
+            $.post('/cart/edit', { id: id, amount: amount }, function () {
+                location.reload();
+
+            });
+        });
+    });
+</script>
+

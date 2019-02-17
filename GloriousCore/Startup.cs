@@ -45,6 +45,7 @@ namespace GloriousCore
                 });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSession();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -64,12 +65,14 @@ namespace GloriousCore
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseAuthentication();
+            app.UseSession();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     "areas",
                     "{area}/{controller}/{action}",
                 new { Areas = "Admin", Controller = "DashBoard", Action = "Products" });
+
                 routes.MapRoute(
                       "default",
                       "{controller}/{action}",

@@ -46,7 +46,14 @@
                 <div class="col-lg-4 col-sm-12 filter-item ">
                     <form asp-action="search" asp-controller="shop" method="post">
                         <div class="finder">
-                            <input type="text" name="str">
+                            @if (ViewBag.search != null)
+                            {
+                                <input type="text" name="str" value="@ViewBag.search">
+                            }
+                            else
+                            {
+                                <input type="text" name="str">
+                            }                           
                             <input type="submit" value="Поиск">
                         </div>
                     </form>
