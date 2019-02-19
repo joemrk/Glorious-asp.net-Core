@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<GloriousCore.Models.CartLine>
 @{
     ViewData["Title"] = "Корзина";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -18,7 +18,7 @@
         <table class="cart-tbl row " align="center">
             @try
             {
-                @foreach (var item in ViewBag.Cart)
+                @foreach (var item in Model)
                 {
                     <tr>
                         <td>
@@ -73,7 +73,6 @@
                 </tr>
             }
 
-
             <tr>
                 <td colspan="5" style="border: none;">
                     <div class="tbl-total">
@@ -82,7 +81,8 @@
                 </td>
                 <td style="border: none;">
                     <div class="tbl-total">
-                        <p>@ViewBag.Total.ToString("0.00 ₴")</p>
+                        @Model.Sum(p => p.Product.Price * p.Quantity)
+                        @*<p>@ViewBag.Total.ToString("0.00 ₴")</p>*@
                     </div>
                 </td>
             </tr>
@@ -98,13 +98,13 @@
                     <label>Телефон:<span>*</span> </label><br>
                     <div class="num">
                         <p class="num-itm">+380</p>
-                        <input id="num" name="num" required type="text" pattern="[0-9-()+]{3,20}">
+                        <input id="num" name="number" required type="text" pattern="[0-9-()+]{3,20}">
                     </div>
                 </div>
 
                 <div class="form-item col-md-12 col-lg-6">
                     <label>Email:<span>*</span> </label><br>
-                    <input id="mail" required type="text" name="email" pattern="^([a-z0-9_-]+\.)*[a-z0-9_-]+@("@")[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$">
+                    <input id="mail" required type="text" name="mail" pattern="^([A-z0-9_-]+\.)*[a-z0-9_-]+@("@")[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$">
                 </div>
                 <div class="form-item col-md-12 col-lg-6">
                     <label>Город:<span>*</span> </label><br>
@@ -123,7 +123,7 @@
 
                 <div class="form-item col-md-12 col-lg-6">
                     <label>Адрес/отделение/почтовый индекс:<span>*</span> </label><br>
-                    <input id="address" required type="text" name="adres" value="" pattern="^[0-9A-zА-яёЁЇїІіЄєҐґ '.,-/]*$">
+                    <input id="address" required type="text" name="addres" value="" pattern="^[0-9A-zА-яёЁЇїІіЄєҐґ '.,-/]*$">
                 </div>
 
                 <div class="form-item col-md-12 col-lg-6">
@@ -135,7 +135,6 @@
                 <div class="col-md-12">
                     <input required type="checkbox">
                     <label class="col-md-11">
-                        @*@Html.ActionLink("правила и условия", "Terms", "Home")*@
                         Я прочитал(а) и соглашаюсь с правилами сайта <a asp-action="Terms" asp-controller="Shop">правила и условия</a> <span>*</span>
                     </label>
                 </div>
