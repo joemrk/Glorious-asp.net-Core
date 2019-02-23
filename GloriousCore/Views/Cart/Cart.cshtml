@@ -1,5 +1,4 @@
-﻿@model IEnumerable<GloriousCore.Models.CartLine>
-@{
+﻿@{
     ViewData["Title"] = "Корзина";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -18,7 +17,7 @@
         <table class="cart-tbl row " align="center">
             @try
             {
-                @foreach (var item in Model)
+                @foreach (var item in ViewBag.Cart)
                 {
                     <tr>
                         <td>
@@ -38,7 +37,7 @@
                         </td>
                         <td>
                             <div class="tbl-item">
-                                <p>@item.Product.Price</p>
+                                <p>@item.Product.Price₴</p>
                             </div>
                         </td>
                         <td>
@@ -81,8 +80,7 @@
                 </td>
                 <td style="border: none;">
                     <div class="tbl-total">
-                        @Model.Sum(p => p.Product.Price * p.Quantity)
-                        @*<p>@ViewBag.Total.ToString("0.00 ₴")</p>*@
+                        <p>@ViewBag.Total.ToString("0.00 ₴")</p>
                     </div>
                 </td>
             </tr>
@@ -150,7 +148,7 @@
 <script>
 
     $('textarea').on('input', (function () {
-        var pattern = "^[0-9A-zА-яЁё '.,-/*/!/?/(/)/]*$";
+        var pattern = "^[0-9A-zА-яёЁЇїІіЄєҐґ '.,-/*/!/?/(/)/]*$";
         if ($(this).val().match(pattern)) {
             this.classList.remove('nono');
             $('#sub').removeAttr('disabled');

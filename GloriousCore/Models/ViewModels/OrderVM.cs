@@ -26,34 +26,31 @@ namespace GloriousCore.Models.ViewModels
 
         public int Id { get; set; }
 
-        [RegularExpression(@"[a-Z]", ErrorMessage = "Недопустимые символы.")]
-        [Remote("CheckString", "Home", ErrorMessage = "Недопустимые символы.")]
+        [RegularExpression(@"^[A-zА-яёЁЇїІіЄєҐґ '.-]*$", ErrorMessage = "Недопустимые символы.")]
         [Required(ErrorMessage = "Поле обязательно для заполнения.")]
         public string Name { get; set; }
 
-        [RegularExpression(@"[0-9]", ErrorMessage = "Недопустимые символы.")]
-        [Remote("CheckString", "Home", ErrorMessage = "Недопустимые символы.")]
+        [RegularExpression(@"[0-9-()+]{3,20}", ErrorMessage = "Недопустимые символы.")]
         [Required(ErrorMessage = "Поле обязательно для заполнения.")]
         public string Number { get; set; }
 
-        [Remote("CheckString", "Home", ErrorMessage = "Недопустимые символы.")]
+        [RegularExpression(@"^([A-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$", ErrorMessage = "Недопустимые символы.")]
         [Required(ErrorMessage = "Поле обязательно для заполнения.")]
         public string Mail { get; set; }
 
-        [RegularExpression(@"[a-Z]", ErrorMessage = "Недопустимые символы.")]
-        [Remote("CheckString", "Home", ErrorMessage = "Недопустимые символы.")]
+        [RegularExpression(@"^[0-9A-zА-яёЁЇїІіЄєҐґ '.,-/]*$", ErrorMessage = "Недопустимые символы.")]
         [Required(ErrorMessage = "Поле обязательно для заполнения.")]
         public string City { get; set; }
 
-        [Remote("CheckString", "Home", ErrorMessage = "Недопустимые символы.")]
+        [RegularExpression(@"^[0-9A-zА-яёЁЇїІіЄєҐґ '.,-/]*$", ErrorMessage = "Недопустимые символы.")]
         [Required(ErrorMessage = "Поле обязательно для заполнения.")]
         public string Addres { get; set; }
 
-        [RegularExpression(@"[a-Z]", ErrorMessage = "Недопустимые символы.")]
+        [RegularExpression(@"^[0-9A-zА-яёЁЇїІіЄєҐґ '.,-/]*$", ErrorMessage = "Недопустимые символы.")]
         [Required(ErrorMessage = "Поле обязательно для заполнения.")]
         public string Post { get; set; }
 
-        [Remote("CheckString", "Home", ErrorMessage = "Недопустимые символы.")]
+        [RegularExpression(@"^[0-9A-zА-яёЁЇїІіЄєҐґ '.,-/]*$", ErrorMessage = "Недопустимые символы.")]
         public string Note { get; set; }
 
         [Required(ErrorMessage = "Поле обязательно для заполнения.")]

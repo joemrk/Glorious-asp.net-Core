@@ -2,7 +2,6 @@
 using GloriousCore.Models;
 using GloriousCore.Models.Data;
 using GloriousCore.Models.Data.Entities;
-using GloriousCore.Tools;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,13 +15,6 @@ namespace GloriousCore.Controllers
 {
     public class CartController : Controller
     {
-        private readonly ViewRender renderView;
-
-        public CartController(ViewRender renderView)
-        {
-            this.renderView = renderView;
-        }
-
         [Route("cart")]
         [HttpGet]
         public IActionResult Cart()
@@ -114,6 +106,7 @@ namespace GloriousCore.Controllers
                 SessionHelper.Set(HttpContext.Session, "cart", cart);
             }
         }
+
         [Route("del")]
         public IActionResult Del(int id)
         {
@@ -136,34 +129,8 @@ namespace GloriousCore.Controllers
 
         [HttpPost]
         [Route("buy")]
-        //public IActionResult Buy(string name, string num, string email, string city, string post, string adres, string note)
         public IActionResult Buy(OrderDBO model)
         {
-            #region  shitCode, FIXED /////////////////////////////////////////
-            int conrtrol = 0;
-
-            //List<string> model = new List<string>();
-            //model.Add(name);
-            //model.Add(num);
-            //model.Add(email);
-            //model.Add(city);
-            //model.Add(post);
-            //model.Add(adres);
-            //model.Add(note);
-
-            //foreach (string item in model)
-            //{
-            //    bool result = !(item.Contains("{") ||
-            //                    item.Contains("}") ||
-            //                    item.Contains("<") ||
-            //                    item.Contains(">") ||
-            //                    item.Contains("&") ||
-            //                    item.Contains("#") ||
-            //                    item.Contains("$"));
-            //    if (!result)
-            //    {
-            //        conrtrol += 1;
-            //    }
 
             //    //content =
             //    //content.Replace("\\", string.Empty).
@@ -179,9 +146,7 @@ namespace GloriousCore.Controllers
             //    //Replace("^", string.Empty).
             //    //Replace("+", string.Empty);
 
-            //}
-            #endregion
-            if (conrtrol == 0)
+            if (ModelState.IsValid)
             {
                 MailAddress from = new MailAddress("glorius.order@gmail.com", "Glorius new order");
                 MailAddress to = new MailAddress("o9ino4ka@gmail.com");
@@ -213,61 +178,36 @@ namespace GloriousCore.Controllers
                 return Redirect("/cart");
             }
         }
-        [Route("htmlStr")]
-        public async void GetHtmlString()
-        {
-            var cart = SessionHelper.Get<List<CartLine>>(HttpContext.Session, "cart");
-
-            //RenderView rv = HttpContext.RequestServices.GetService<RenderView>();
-            string result = await renderView.RenderAsync("Cart", cart);
-
-
-            string ad = "";
-
-
-
-        }
 
         public string HtmlCart(OrderDBO model)
         {
             var cart = SessionHelper.Get<List<CartLine>>(HttpContext.Session, "cart");
             
             string cartLine = "";
-            string total = "0";
+            int total = 0;
 
             foreach (var item in cart)
             {
-                string productName = item.Product.Name.ToString();
-                string code = item.Product.ProductCode.ToString();
-                string quantity = item.Quantity.ToString();
-                string sum = "";
+                int sum = 0;
                 if (item.Product.Discount != 0) {
-                    sum = (item.Quantity * item.Product.Discount).ToString();
-                    total = (Convert.ToInt32(total) + (item.Quantity * item.Product.Discount)).ToString();
+                    sum = (item.Quantity * item.Product.Discount);
+                    total = total + (item.Quantity * item.Product.Discount);
                 }
                 else {
-                    sum = (item.Quantity * item.Product.Price).ToString();
-                    total = (Convert.ToInt32(total) + (item.Quantity * item.Product.Price)).ToString("0.00");
+                    sum = (item.Quantity * (int)item.Product.Price);
+                    total = total + (item.Quantity * (int)item.Product.Price);
                 }
 
-                cartLine += @"
+                cartLine += String.Format(@"
                         <tr style=""text-align: center; border-bottom: 1px solid #000000"">
-						<td>{code}</td>
-						<td><a href=""glorious.com.ua/product/{code}"" style=""text-decoration: none;"">{productName}</a></td>
-						<td>{quanity}</td>
-						<td>{sum}</td>
-					    </tr>";
+						<td>{0}</td>
+						<td><a href=""glorious.com.ua/product/{0}"" style=""text-decoration: none;"">{1}</a></td>
+						<td>{2}</td>
+						<td>{3}</td>
+					    </tr>", item.Product.ProductCode, item.Product.Name, item.Quantity.ToString(), sum.ToString("0.00"));
             }
 
-            string name = model.Name.ToString();
-            string phone = model.Number.ToString();
-            string email = model.Mail.ToString();
-            string city = model.City.ToString();
-            string addres = model.Addres.ToString();
-            string service = model.Post.ToString();
-            string note = model.Note.ToString();
-
-            string result = @"<table bgcolor=""#F7F7F7"" border=""0"" cellpadding=""0"" cellspacing=""0"" style=""margin:0; padding:0 "" width=""100%"">
+            string result = String.Format(@"<table bgcolor=""#F7F7F7"" border=""0"" cellpadding=""0"" cellspacing=""0"" style=""margin:0; padding:0 "" width=""100%"">
 		<tr style=""display: grid;"">
 			<td height=""100%"" style=""margin: 10px"">
 				<table style=""border-collapse: collapse; font-family: sans-serif; padding: 20px; box-shadow: 5px 5px 5px grey; background-color: #fff; margin: 0 auto;"" cellpadding=""10px"">
@@ -277,44 +217,44 @@ namespace GloriousCore.Controllers
 						<th>Quantity</th>
 						<th>Sum</th>
 					</tr>
-					{cartLine}
-					<tr style=""border-bottom: 2px solid #000000""><td colspan=""4"" style=""font-weight: bold; text-align: right;"">Total: {total}</td></tr>
+					{0}
+					<tr style=""border-bottom: 2px solid #000000""><td colspan=""4"" style=""font-weight: bold; text-align: right;"">Total: {1}</td></tr>
 				</table>
 			</td>
 			<td height=""100%"" style=""margin: 10px"">
 				<table style=""border-collapse: collapse; font-family: sans-serif; padding: 20px; box-shadow: 5px 5px 5px grey; background-color: #fff; margin: 0 auto;"" cellpadding=""10px"">
 					<tr>
 						<td>ФИО: </td>
-						<td>{name}</td>
+						<td>{2}</td>
 					</tr>
 					<tr>
 						<td>Телефон: </td>
-						<td>{phome}</td>
+						<td>{3}</td>
 					</tr>
 					<tr>
 						<td>Email:</td>
-						<td>{email}</td>
+						<td>{4}</td>
 					</tr>
 					<tr>
 						<td>Город: </td>
-						<td>{city}</td>
+						<td>{5}</td>
 					</tr>
 					<tr>
 						<td>Служба доставки: </td>
-						<td>{service}</td>
+						<td>{6}</td>
 					</tr>
 					<tr>
 						<td>Адрес/отделение/почтовый индекс: </td>
-						<td>{addres}</td>
+						<td>{7}</td>
 					</tr>
 					<tr>
 						<td>Дополнительная информация: </td>
-						<td style=""max-width: 400px;"">{note}</td>
+						<td style=""max-width: 400px;"">{8}</td>
 					</tr>
 				</table>
 			</td>
 		</tr>
-	</table>";
+	</table>", cartLine, total.ToString("0.00"), model.Name, model.Number, model.Mail, model.City, model.Addres, model.Post, model.Note);
 
             return result;
         }

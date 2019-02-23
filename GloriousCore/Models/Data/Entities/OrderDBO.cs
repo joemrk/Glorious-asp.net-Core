@@ -18,5 +18,6 @@ namespace GloriousCore.Models.Data.Entities
         public bool Complete { get; set; }
 
         //cart
+        
     }
 }

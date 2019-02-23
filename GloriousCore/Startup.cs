@@ -1,5 +1,4 @@
-﻿using GloriousCore.Tools;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -47,9 +46,6 @@ namespace GloriousCore
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSession();
-            services.AddSingleton<IRenderView, RenderView>();
-            services.AddSingleton<ViewRender>();
-
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

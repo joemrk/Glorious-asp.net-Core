@@ -190,6 +190,7 @@ nav a {
 
     .tbl-total p {
         margin: 0;
+        font-weight: bold;
     }
 
 .cart-tbl td:last-child {
