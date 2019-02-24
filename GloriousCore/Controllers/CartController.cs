@@ -170,13 +170,18 @@ namespace GloriousCore.Controllers
 
                 HttpContext.Session.Clear();
 
-                return RedirectToAction("products", "Shop");
+                return Redirect("/buy_");
             }
             else
             {
                 ModelState.AddModelError("", "Введен запрещенный символ");
                 return Redirect("/cart");
             }
+        }
+        [HttpGet("buy_")]
+        public IActionResult Buy_()
+        {
+            return View();
         }
 
         public string HtmlCart(OrderDBO model)
@@ -190,8 +195,8 @@ namespace GloriousCore.Controllers
             {
                 int sum = 0;
                 if (item.Product.Discount != 0) {
-                    sum = (item.Quantity * item.Product.Discount);
-                    total = total + (item.Quantity * item.Product.Discount);
+                    sum = (item.Quantity * (int)item.Product.Discount);
+                    total = total + (item.Quantity * (int)item.Product.Discount);
                 }
                 else {
                     sum = (item.Quantity * (int)item.Product.Price);

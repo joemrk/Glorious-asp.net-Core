@@ -1,0 +1,103 @@
+﻿@model GloriousCore.Models.ViewModels.ProductVM
+@{
+    ViewBag.Title = Model.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container min-h">
+    <div class="product box-shadow row">
+        <div class="gallery col-lg-6 col-md-12">
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    @foreach (var item in ViewBag.Ids)
+                    {
+                        <div class="swiper-slide"><img src="/gallery/@item" enctype="multipart/form-data" /></div>
+                    }
+                </div>
+                <!-- Add Pagination -->
+                <div class="swiper-pagination"></div>
+                <!-- Add Arrows -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </div>
+        <div class="details col-lg-6 col-md-12">
+            <h4 class="bold">@Html.DisplayFor(model => model.Name)</h4>
+            <p class="text-muted code">@Html.DisplayFor(model => model.ProductCode)</p>
+            <p class="text-muted">Описание:</p>
+            <p>@Html.DisplayFor(model => model.Description)</p>
+            <p class="text-muted">Материал: @Html.DisplayFor(model => model.MaterialName)</p>
+            <p class="text-muted">Категория: @Html.DisplayFor(model => model.CategoryName)</p>
+            <br /><br />
+            <div class="buy-control">
+                <div class="row butt-group">
+                    @if (Model.Discount != 0)
+                    {
+                        <div class="product-discount col-md-12 col-lg-3">
+                            <P>₴ @Html.DisplayFor(model => model.Price)</P>
+                            <P>₴ @Html.DisplayFor(model => model.Discount)</P>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="price col-md-12 col-lg-3">
+                            <P>₴ @Html.DisplayFor(model => model.Price)</P>
+                        </div>
+                    }
+                    <div class="amount col-md-12 col-lg-2">
+                        <input min="1" id="amount" name="amount" type="number" value="1">
+                    </div>
+                    <div class="butt col-md-12 col-lg-2">
+                        <input id="buy" type="submit" value="Купить" />
+                    </div>
+                    <div class="butt col-md-12 col-lg-2">
+                        <input id="add" type="submit" value="Добавить в корзину" />
+                    </div>
+                </div>
+
+            </div>
+            <br />
+            <div class="back-to-shop">
+                <a href="@ViewBag.Ref"><< Назад</a>
+            </div>
+            <br />
+        </div>
+    </div>
+</div>
+<!-- Swiper JS -->
+<script src="~/js/swiper.min.js"></script>
+<script src="~/js/jquery-3.3.1.min.js"></script>
+<!-- Initialize Swiper -->
+<script>
+    var swiper = new Swiper('.swiper-container', {
+        slidesPerView: 1,
+        spaceBetween: 30,
+        loop: true,
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+    });
+
+    $(function () {
+        $('#add').on('click', function () {
+            var amount = $('#amount').val();
+            $.post('/add', { id: @Model.Id, amount: amount, a: 1 }, function () {
+                location.reload();
+            });
+        });
+    });
+
+    $(function () {
+        $('#buy').on('click', function () {
+            var amount = $('#amount').val();
+            $.post('/add', { id: @Model.Id, amount: amount, a: 2 }, function () {
+                window.location.replace("/cart");
+            });
+        });
+    });
+</script>

@@ -83,7 +83,7 @@
                                         <input type="submit" value="Купить">
                                     </form>
                                 </li>
-                                <li>@Html.ActionLink("Детали", "GetProduct", "Shop", new { id = product.Id }, null)</li>
+                                <li>@Html.ActionLink("Детали", "GetProduct", "Shop", new { pc = product.ProductCode }, null)</li>
                             </ul>
                         </span>
                         <img width="200" height="200" style="object-fit: cover" src="@Url.Action("GetPreview", "Shop",

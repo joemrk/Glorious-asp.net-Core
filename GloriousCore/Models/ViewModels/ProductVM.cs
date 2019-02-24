@@ -46,7 +46,7 @@ namespace GloriousCore.Models.ViewModels
         public byte[] Img { get; set; }
         public string ProductCode { get; set; }
         public string ImgType { get; set; }
-        public int Discount { get; set; }
+        public decimal Discount { get; set; }
         public int SectionId { get; set; }
         public string SectionName { get; set; }
 
