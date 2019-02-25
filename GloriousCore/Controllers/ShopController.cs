@@ -14,6 +14,11 @@ namespace GloriousCore.Controllers
 {
     public class ShopController : Controller
     {
+        public readonly Db db;
+        public ShopController(Db context)
+        {
+            db = context;
+        }
         //not used
         public IActionResult Index()
         {
@@ -26,45 +31,42 @@ namespace GloriousCore.Controllers
             CartLong();
             var pageNumber = page ?? 1;
             PagedList<ProductVM> Pp;
-            using (Db db = new Db())
-            {
-                ViewBag.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
-                ViewBag.Materials = new SelectList(db.Materials.ToList(), "Id", "Name");
 
-                ViewBag.SelectedCat = catId.ToString();
-                ViewBag.SelectedMat = matId.ToString();
+            ViewBag.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
+            ViewBag.Materials = new SelectList(db.Materials.ToList(), "Id", "Name");
 
-                Pp = new PagedList<ProductVM>(db.Products
-                     .Where(x => (catId == null || catId == 0 || x.CategoryId == catId) && (matId == null || matId == 0 || x.MaterialId == matId))
-                     .Select(x => new ProductVM(x))
-                     , pageNumber, 20);
-            }           
+            ViewBag.SelectedCat = catId.ToString();
+            ViewBag.SelectedMat = matId.ToString();
+
+            Pp = new PagedList<ProductVM>(db.Products
+                 .Where(x => (catId == null || catId == 0 || x.CategoryId == catId) && (matId == null || matId == 0 || x.MaterialId == matId))
+                 .Select(x => new ProductVM(x))
+                 , pageNumber, 20);
+
             return View(Pp);
         }
 
         public FileContentResult GetPreview(int id)
         {
-            using (Db db = new Db())
-            {
-                ProductDBO img = db.Products.Find(id);
 
-                if (img != null) return File(img.Img, img.ImgType);
-                else return null;
-            }          
+            ProductDBO img = db.Products.Find(id);
+
+            if (img != null) return File(img.Img, img.ImgType);
+            else return null;
+
         }
 
         [HttpGet("gallery/{id}")]
         public FileContentResult GetGallery(int id)
         {
-            using (Db db = new Db())
-            {
-                GalleryDBO img = db.ProductGallery.Find(id);
 
-                if (img != null)
-                    return File(img.Img, img.ImgType);
-                else
-                    return null;
-            }
+            GalleryDBO img = db.ProductGallery.Find(id);
+
+            if (img != null)
+                return File(img.Img, img.ImgType);
+            else
+                return null;
+
         }
 
         public void CartLong()
@@ -82,7 +84,7 @@ namespace GloriousCore.Controllers
                     index += item.Quantity;
                 }
                 ViewBag.CartLong = index;
-            }            
+            }
         }
 
         [HttpGet("product/{pc}")]
@@ -93,22 +95,20 @@ namespace GloriousCore.Controllers
             int id = Convert.ToInt32(pc.Substring(4));
 
             ProductVM product;
-            using (Db db = new Db())
-            {
-                ProductDBO dto = db.Products.Find(id);
-                product = new ProductVM(dto);
-            }
+
+            ProductDBO dto = db.Products.Find(id);
+            product = new ProductVM(dto);
+
 
             List<GalleryVM> gallery;
             List<int> ids = new List<int>();
-            using (Db db = new Db())
-            {
-                gallery = db.ProductGallery
-                            .ToArray()
-                            .Where(x => x.ProductId == id)
-                            .Select(x => new GalleryVM(x))
-                            .ToList();
-            }
+
+            gallery = db.ProductGallery
+                        .ToArray()
+                        .Where(x => x.ProductId == id)
+                        .Select(x => new GalleryVM(x))
+                        .ToList();
+
 
             foreach (var item in gallery)
             {
@@ -141,16 +141,15 @@ namespace GloriousCore.Controllers
 
             if (strCheck)
             {
-                using (Db db = new Db())
-                {
-                    ViewBag.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
-                    ViewBag.Materials = new SelectList(db.Materials.ToList(), "Id", "Name");
 
-                    Pp = new PagedList<ProductVM>(db.Products
-                         .Where(x => x.Name.Contains(str) || x.ProductCode.Contains(str))
-                         .Select(x => new ProductVM(x))
-                         , pageNumber, 20);
-                }
+                ViewBag.Categories = new SelectList(db.Categories.ToList(), "Id", "Name");
+                ViewBag.Materials = new SelectList(db.Materials.ToList(), "Id", "Name");
+
+                Pp = new PagedList<ProductVM>(db.Products
+                     .Where(x => x.Name.Contains(str) || x.ProductCode.Contains(str))
+                     .Select(x => new ProductVM(x))
+                     , pageNumber, 20);
+
                 ViewBag.search = str;
                 return View(Pp);
             }
@@ -184,11 +183,8 @@ namespace GloriousCore.Controllers
         [HttpGet("about")]
         public IActionResult About()
         {
-            using (Db db = new Db())
-            {
-                ViewBag.ProductCounter = db.Products.Count();
-                ViewBag.OrderCounter = 23;
-            }
+            ViewBag.ProductCounter = db.Products.Count();
+            ViewBag.OrderCounter = 23;
 
             CartLong();
             return View();

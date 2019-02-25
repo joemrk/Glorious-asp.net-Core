@@ -15,19 +15,38 @@ namespace GloriousCore.Controllers
 {
     public class CartController : Controller
     {
+        public readonly Db db;
+        public CartController(Db context)
+        {
+            db = context;
+        }
         [Route("cart")]
         [HttpGet]
         public IActionResult Cart()
         {
             CartLong();
             var cart = SessionHelper.Get<List<CartLine>>(HttpContext.Session, "cart");
+            int total = 0;
 
             ViewBag.Cart = cart;
-            try
+            if (cart != null)
             {
-                ViewBag.Total = cart.Sum(p => p.Product.Price * p.Quantity);
+                foreach (var item in cart)
+                {
+                    if (item.Product.Discount != 0)
+                    {
+                        total += (int)item.Product.Discount * item.Quantity;
+                    }
+                    else
+                    {
+                        total += (int)item.Product.Price * item.Quantity;
+                    }
+                }
+
+                ViewBag.Total = total;
+                //ViewBag.Total = cart.Sum(p => p.Product.Price * p.Quantity);
             }
-            catch
+            else
             {
                 ViewBag.Total = 0;
             }
@@ -41,37 +60,36 @@ namespace GloriousCore.Controllers
         {
             if (amount > 0 && id > 0 && (a == 1 || a == 2))
             {
-                using (Db db = new Db())
+
+                if (SessionHelper.Get<List<CartLine>>(HttpContext.Session, "cart") == null)
                 {
-                    if (SessionHelper.Get<List<CartLine>>(HttpContext.Session, "cart") == null)
+                    var cart = new List<CartLine>();
+                    cart.Add(new CartLine()
                     {
-                        var cart = new List<CartLine>();
+                        Product = db.Products.Find(id),
+                        Quantity = amount
+                    });
+                    SessionHelper.Set(HttpContext.Session, "cart", cart);
+                }
+                else
+                {
+                    var cart = SessionHelper.Get<List<CartLine>>(HttpContext.Session, "cart");
+                    int index = Exists(cart, id);
+                    if (index == -1)
+                    {
                         cart.Add(new CartLine()
                         {
                             Product = db.Products.Find(id),
                             Quantity = amount
                         });
-                        SessionHelper.Set(HttpContext.Session, "cart", cart);
                     }
                     else
                     {
-                        var cart = SessionHelper.Get<List<CartLine>>(HttpContext.Session, "cart");
-                        int index = Exists(cart, id);
-                        if (index == -1)
-                        {
-                            cart.Add(new CartLine()
-                            {
-                                Product = db.Products.Find(id),
-                                Quantity = amount
-                            });
-                        }
-                        else
-                        {
-                            cart[index].Quantity += amount;
-                        }
-                        SessionHelper.Set(HttpContext.Session, "cart", cart);
+                        cart[index].Quantity += amount;
                     }
+                    SessionHelper.Set(HttpContext.Session, "cart", cart);
                 }
+
 
                 if (a == 1)
                     return Redirect("/cart");
@@ -187,18 +205,20 @@ namespace GloriousCore.Controllers
         public string HtmlCart(OrderDBO model)
         {
             var cart = SessionHelper.Get<List<CartLine>>(HttpContext.Session, "cart");
-            
+
             string cartLine = "";
             int total = 0;
 
             foreach (var item in cart)
             {
                 int sum = 0;
-                if (item.Product.Discount != 0) {
+                if (item.Product.Discount != 0)
+                {
                     sum = (item.Quantity * (int)item.Product.Discount);
                     total = total + (item.Quantity * (int)item.Product.Discount);
                 }
-                else {
+                else
+                {
                     sum = (item.Quantity * (int)item.Product.Price);
                     total = total + (item.Quantity * (int)item.Product.Price);
                 }
@@ -284,19 +304,18 @@ namespace GloriousCore.Controllers
         [HttpGet("getpreview")]
         public FileContentResult GetPreview(int id)
         {
-            using (Db db = new Db())
-            {
-                ProductDBO img = db.Products.Find(id);
 
-                if (img != null)
-                {
-                    return File(img.Img, img.ImgType);
-                }
-                else
-                {
-                    return null;
-                }
+            ProductDBO img = db.Products.Find(id);
+
+            if (img != null)
+            {
+                return File(img.Img, img.ImgType);
             }
+            else
+            {
+                return null;
+            }
+
         }
     }
 }

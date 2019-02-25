@@ -1,23 +1,25 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using GloriousCore.Models.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using PaulMiami.AspNetCore.Mvc.Recaptcha;
+using System;
 using System.IO;
 
 namespace GloriousCore
 {
     public class Startup
     {
-        private readonly IConfiguration configuration;
-
         public Startup(IConfiguration configuration)
         {
-            this.configuration = configuration;
+            Configuration = configuration;
         }
+
+        public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -27,16 +29,8 @@ namespace GloriousCore
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddSingleton<IConfiguration>(new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile($"appsettings.json")
-                .Build());
-
-            services.AddRecaptcha(new RecaptchaOptions  // залупа йобана!
-            {
-                SiteKey = configuration["561"],
-                SecretKey = configuration["561"]
-            });
+            services.AddDbContext<Db>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
@@ -64,6 +58,7 @@ namespace GloriousCore
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+
             app.UseAuthentication();
             app.UseSession();
             app.UseMvc(routes =>

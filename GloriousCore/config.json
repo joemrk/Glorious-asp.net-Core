@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "conn": "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\joe\\Desktop\\GloriousCore\\GloriousCore\\AppData\\Db.mdf;Integrated Security=True;Connect Timeout=30"
+  }
+}
