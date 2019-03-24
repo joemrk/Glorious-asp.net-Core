@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.IO;
 
 namespace GloriousCore
 {
@@ -29,8 +29,14 @@ namespace GloriousCore
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddDbContext<Db>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            IConfigurationRoot cfg = new ConfigurationBuilder()
+            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+            string conn = cfg.GetConnectionString("PostgreSQL");
+            services.AddDbContext<Db>(opt => opt.UseNpgsql(conn));
+            //services.AddDbContext<Db>(opt => opt.UseNpgsql(Configuration.GetConnectionString("PostgreSQL")));
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
@@ -39,6 +45,11 @@ namespace GloriousCore
                 });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
             services.AddSession();
         }
 
@@ -55,6 +66,11 @@ namespace GloriousCore
 
                 app.UseHsts();
             }
+            app.Use((context, next) =>
+            {
+                context.Request.Scheme = "https";
+                return next();
+            });
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
@@ -72,10 +88,6 @@ namespace GloriousCore
                       "default",
                       "{controller}/{action}",
                       new { Controller = "Shop", Action = "Products" });
-
-                //routes.MapRoute(
-                //    name: "default",
-                //    template: "{controller=Shop}/{action=Products}/{id?}");
             });
         }
     }

@@ -141,7 +141,6 @@ namespace GloriousCore.Areas.Admin.Controllers
 
             return RedirectToAction("AddProduct");
         }
-
         public IActionResult Products(int? page, int? catId, int? matId)
         {
             PagedList<ProductVM> Pp;
@@ -279,7 +278,6 @@ namespace GloriousCore.Areas.Admin.Controllers
 
             return RedirectToAction("Products");
         }
-
         public IActionResult DeleteProduct(int id)
         {
 
@@ -293,6 +291,7 @@ namespace GloriousCore.Areas.Admin.Controllers
 
             return RedirectToAction("Products");
         }
+       
         /// <summary>
         /// SECTION
         /// </summary>
@@ -309,11 +308,10 @@ namespace GloriousCore.Areas.Admin.Controllers
 
             ViewBag.Sections = new SelectList(db.Sections.ToList(), "Id", "Name");
 
-
             return View(SectionVMList);
         }
         [HttpPost]
-        public string AddNewSection(string secName)
+        public string AddSection(string secName)
         {
             string id;
 
@@ -352,7 +350,7 @@ namespace GloriousCore.Areas.Admin.Controllers
 
             if (db.Sections.Any(x => x.Name == newSecName))
                 return "Имя существует";
-            var dto = db.Categories.Find(id);
+            var dto = db.Sections.Find(id);
             dto.Name = newSecName;
             dto.Slug = newSecName.Replace(" ", "-").ToLower();
             db.SaveChanges();
@@ -375,12 +373,12 @@ namespace GloriousCore.Areas.Admin.Controllers
             .Select(x => new CategoryVM(x))
             .ToList();
 
+            ViewBag.Sections = new SelectList(db.Sections.ToList(), "Id", "Name");
 
             return View(CategoryVMList);
         }
-
         [HttpPost]
-        public string AddNewCategory(string catName)
+        public string AddCategory(string catName, int secId)
         {
             string id;
 
@@ -392,18 +390,18 @@ namespace GloriousCore.Areas.Admin.Controllers
             {
                 Name = catName,
                 Slug = catName.Replace(" ", "-").ToLower(),
-                Sorting = 100
-            };
+                Sorting = 100,
+                SectionId = secId,
+                SectionName = db.Sections.Find(secId).Name
+        };
 
             db.Categories.Add(dto);
             db.SaveChanges();
 
             id = dto.Id.ToString();
 
-
             return id;
         }
-
         public IActionResult DeleteCategory(int id)
         {
 
@@ -415,7 +413,6 @@ namespace GloriousCore.Areas.Admin.Controllers
 
             return RedirectToAction("Categories");
         }
-
         [HttpPost]
         public string RenameCategory(string newCatName, int id)
         {
@@ -429,6 +426,23 @@ namespace GloriousCore.Areas.Admin.Controllers
 
 
             return "okay";
+        }
+        public string СhangeSection(int catId, int secId)
+        {
+            try
+            {
+                CategoryDBO dbo = db.Categories.Find(catId);
+                dbo.SectionId = secId;
+                dbo.SectionName = db.Sections.Find(secId).Name;
+
+                db.SaveChanges();
+                return "ok";
+            }
+            catch (Exception)
+            {
+                return "something is wrong";
+            }
+            
         }
 
         /// <summary>
@@ -448,9 +462,8 @@ namespace GloriousCore.Areas.Admin.Controllers
 
             return View(MaterialVMList);
         }
-
         [HttpPost]
-        public string AddNewMaterial(string matName)
+        public string AddMaterial(string matName)
         {
             string id;
 
@@ -473,7 +486,6 @@ namespace GloriousCore.Areas.Admin.Controllers
 
             return id;
         }
-
         public IActionResult DeleteMaterial(int id)
         {
 
@@ -485,7 +497,6 @@ namespace GloriousCore.Areas.Admin.Controllers
 
             return RedirectToAction("Materials");
         }
-
         public string RenameMaterial(string newMatName, int id)
         {
 

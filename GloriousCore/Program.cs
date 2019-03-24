@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.IO;
-using System.Net;
 
 namespace GloriousCore
 {
@@ -12,10 +9,26 @@ namespace GloriousCore
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            //CreateWebHostBuilder(args).Build().Run();
+
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("hosting.json", optional: true)
+                .AddJsonFile("appSettings.json", optional: true, reloadOnChange: true)
+                .Build();
+
+            var host = new WebHostBuilder()
+                .UseKestrel()
+                .UseConfiguration(config)
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseStartup<Startup>()
+                .Build();
+
+            host.Run();
         }
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-           WebHost.CreateDefaultBuilder(args)
-               .UseStartup<Startup>();
+        //public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+        //   WebHost.CreateDefaultBuilder(args)
+        //       .UseStartup<Startup>();
+
     }
 }
